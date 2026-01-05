@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>መልካም ገና Bambi ✨</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@300;400&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --gold:#e6c27a;
+  --deep:#3b0b0b;
+  --ink:#0c0707;
+  --glass:rgba(255,255,255,0.06);
+  --text:#f5e9cf;
+}
+
+/* 🌙 moon theme */
+body.moon{
+  --gold:#b9c7ff;
+  --deep:#0a102a;
+  --ink:#050814;
+  --glass:rgba(255,255,255,0.08);
+  --text:#e6ebff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  height:100vh;
+  background:radial-gradient(circle at top,var(--deep),var(--ink) 70%);
+  font-family:'Inter',sans-serif;
+  color:var(--text);
+  overflow:hidden;
+  transition:.8s;
+}
+
+/* glow */
+.glow{
+  position:absolute;
+  width:260px;height:260px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(230,194,122,.35),transparent 70%);
+  animation:flicker 4s infinite alternate;
+}
+body.moon .glow{
+  background:radial-gradient(circle,rgba(185,199,255,.35),transparent 70%);
+}
+
+.glow.one{top:10%;left:18%}
+.glow.two{bottom:12%;right:18%;animation-delay:2s}
+
+@keyframes flicker{
+  from{transform:scale(1)}
+  to{transform:scale(1.1)}
+}
+
+/* card */
+.card{
+  position:absolute;
+  inset:0;
+  margin:auto;
+  width:92%;
+  max-width:720px;
+  height:600px;
+  background:var(--glass);
+  backdrop-filter:blur(22px);
+  border-radius:32px;
+  border:1px solid rgba(255,255,255,.2);
+  box-shadow:0 40px 120px rgba(0,0,0,.85);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  animation:rise 1.6s ease;
+}
+
+/* cross */
+.cross{
+  font-size:2.6rem;
+  color:var(--gold);
+  text-shadow:0 0 22px rgba(255,255,255,.6);
+}
+
+/* title */
+h1{
+  margin-top:10px;
+  font-family:'Playfair Display',serif;
+  font-size:3rem;
+  background:linear-gradient(90deg,var(--gold),#fff,var(--gold));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:shine 4s linear infinite;
+}
+
+@keyframes shine{
+  from{background-position:0%}
+  to{background-position:200%}
+}
+
+/* subtitle */
+.subtitle{
+  margin-top:14px;
+  font-size:1.05rem;
+  opacity:.9;
+}
+
+/* buttons */
+button{
+  margin-top:26px;
+  padding:14px 42px;
+  border:none;
+  border-radius:50px;
+  background:linear-gradient(135deg,var(--gold),#b8944e);
+  color:#1b1206;
+  font-weight:500;
+  cursor:pointer;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+  transition:.3s;
+}
+button:hover{transform:translateY(-3px) scale(1.06)}
+
+.toggle{
+  margin-top:14px;
+  font-size:.9rem;
+  opacity:.8;
+  cursor:pointer;
+}
+
+/* text boxes */
+.box{
+  margin-top:22px;
+  display:none;
+  max-width:88%;
+  font-style:italic;
+  line-height:1.9;
+  color:var(--text);
+}
+
+/* choices */
+.choices{
+  display:none;
+  margin-top:20px;
+  gap:14px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.choice{
+  padding:10px 22px;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.4);
+  cursor:pointer;
+  transition:.25s;
+}
+.choice:hover{background:rgba(255,255,255,.15)}
+
+/* final */
+.final{
+  display:none;
+  margin-top:26px;
+  font-size:1.1rem;
+  animation:fade 2s ease;
+}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1}
+}
+
+canvas{position:fixed;inset:0;z-index:0}
+
+@keyframes rise{
+  from{opacity:0;transform:translateY(24px) scale(.96)}
+  to{opacity:1}
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+<div class="glow one"></div>
+<div class="glow two"></div>
+
+<div class="card">
+  <div class="cross">✝️</div>
+  <h1>መልካም ገና Bambi</h1>
+  <div class="subtitle">A gentle ገና blessing for Sinorita</div>
+
+  <button onclick="step1()">Open with blessing 🙏</button>
+  <div class="toggle" onclick="toggleTheme()">🌙 Switch blessing mood</div>
+
+  <div class="box" id="box1"></div>
+
+  <div class="choices" id="choices">
+    <div class="choice" onclick="respond('eyes')">👀 Look softly</div>
+    <div class="choice" onclick="respond('laugh')">😄 Smile & laugh</div>
+    <div class="choice" onclick="respond('shy')">🙈 Stay gentle</div>
+  </div>
+
+  <div class="box" id="box2"></div>
+  <div class="final" id="final"></div>
+</div>
+
+<script>
+/* particles */
+const c=document.getElementById("particles"),ctx=c.getContext("2d");
+c.width=innerWidth;c.height=innerHeight;
+let items=[];
+for(let i=0;i<120;i++){
+  items.push({x:Math.random()*c.width,y:Math.random()*c.height,s:Math.random()+.3,t:Math.random()>.88?"✝️":"❄"});
+}
+function draw(){
+  ctx.clearRect(0,0,c.width,c.height);
+  ctx.font="14px serif";
+  ctx.fillStyle="rgba(255,255,255,.9)";
+  items.forEach(i=>{
+    ctx.fillText(i.t,i.x,i.y);
+    i.y+=i.s;
+    if(i.y>c.height){i.y=-10;i.x=Math.random()*c.width}
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* typing */
+function typeText(el,text,i=0){
+  el.innerHTML+=text.charAt(i);
+  if(i<text.length-1) setTimeout(()=>typeText(el,text,i+1),38);
+}
+
+function step1(){
+  const b=document.getElementById("box1");
+  b.style.display="block";
+  b.innerHTML="";
+  typeText(b,
+    "They say ገና is holy and calm… I agree. But then Bambi looks at me, and even silence starts to speak 😌"
+  );
+  document.getElementById("choices").style.display="flex";
+}
+
+function respond(type){
+  const b=document.getElementById("box2");
+  const f=document.getElementById("final");
+  b.style.display="block";
+
+  if(type==="eyes"){
+    b.innerHTML="Those eyes… that’s why I call you Bambi. Gentle, deep, and impossible to ignore.";
+  }
+  if(type==="laugh"){
+    b.innerHTML="Sinorita, your smile turns this ገና into warmth. Joy fits you naturally.";
+  }
+  if(type==="shy"){
+    b.innerHTML="I respect that, Sinorita. Some beauty is quiet, and that makes it sacred.";
+  }
+
+  setTimeout(()=>{
+    f.style.display="block";
+    f.innerHTML="🎄 On this ገና, may peace follow you, light surround you, and may you always be seen the way you truly are Bambi, with beautiful eyes and a gentle soul.";
+  },1200);
+}
+
+function toggleTheme(){
+  document.body.classList.toggle("moon");
+}
+
+window.onresize=()=>{c.width=innerWidth;c.height=innerHeight}
+</script>
+
+</body>
+</html>
