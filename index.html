@@ -63,7 +63,7 @@ body.moon .glow{
   margin:auto;
   width:92%;
   max-width:720px;
-  height:600px;
+  max-height:90vh;
   background:var(--glass);
   backdrop-filter:blur(22px);
   border-radius:32px;
@@ -71,10 +71,13 @@ body.moon .glow{
   box-shadow:0 40px 120px rgba(0,0,0,.85);
   display:flex;
   flex-direction:column;
-  justify-content:center;
+  justify-content:flex-start;
   align-items:center;
   text-align:center;
+  padding:24px 20px;
+  overflow-y:auto;
   animation:rise 1.6s ease;
+  scroll-behavior:smooth;
 }
 
 /* cross */
@@ -93,6 +96,7 @@ h1{
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
   animation:shine 4s linear infinite;
+  word-break:break-word;
 }
 
 @keyframes shine{
@@ -102,14 +106,15 @@ h1{
 
 /* subtitle */
 .subtitle{
-  margin-top:14px;
+  margin-top:10px;
   font-size:1.05rem;
   opacity:.9;
+  word-break:break-word;
 }
 
 /* buttons */
 button{
-  margin-top:26px;
+  margin-top:16px;
   padding:14px 42px;
   border:none;
   border-radius:50px;
@@ -120,10 +125,10 @@ button{
   box-shadow:0 20px 60px rgba(0,0,0,.4);
   transition:.3s;
 }
-button:hover{transform:translateY(-3px) scale(1.06)}
+button:hover{transform:translateY(-2px) scale(1.04)}
 
 .toggle{
-  margin-top:14px;
+  margin-top:10px;
   font-size:.9rem;
   opacity:.8;
   cursor:pointer;
@@ -131,37 +136,44 @@ button:hover{transform:translateY(-3px) scale(1.06)}
 
 /* text boxes */
 .box{
-  margin-top:22px;
+  margin-top:16px;
   display:none;
-  max-width:88%;
+  max-width:100%;
   font-style:italic;
-  line-height:1.9;
+  line-height:1.8;
   color:var(--text);
+  word-wrap:break-word;
+  text-align:center;
+  overflow-wrap:break-word;
 }
 
 /* choices */
 .choices{
   display:none;
-  margin-top:20px;
-  gap:14px;
+  margin-top:14px;
+  gap:12px;
   flex-wrap:wrap;
   justify-content:center;
 }
 .choice{
-  padding:10px 22px;
+  padding:10px 20px;
   border-radius:22px;
   border:1px solid rgba(255,255,255,.4);
   cursor:pointer;
   transition:.25s;
+  word-break:break-word;
+  text-align:center;
 }
 .choice:hover{background:rgba(255,255,255,.15)}
 
 /* final */
 .final{
   display:none;
-  margin-top:26px;
-  font-size:1.1rem;
+  margin-top:18px;
+  font-size:1rem;
   animation:fade 2s ease;
+  word-break:break-word;
+  line-height:1.7;
 }
 
 @keyframes fade{
@@ -182,11 +194,9 @@ canvas{position:fixed;inset:0;z-index:0}
 
   .card{
     width:94%;
+    max-height:95vh;
     height:auto;
-    min-height:90vh;
-    padding:26px 18px;
-    border-radius:24px;
-    justify-content:center;
+    padding:18px 14px;
   }
 
   h1{
@@ -196,36 +206,34 @@ canvas{position:fixed;inset:0;z-index:0}
 
   .subtitle{
     font-size:.95rem;
-    padding:0 10px;
   }
 
   button{
     width:100%;
-    max-width:320px;
-    padding:14px;
+    max-width:300px;
+    padding:12px;
   }
 
   .toggle{
-    margin-top:10px;
+    margin-top:8px;
   }
 
   .box{
-    font-size:.95rem;
+    font-size:.92rem;
   }
 
   .choices{
-    gap:10px;
+    gap:8px;
   }
 
   .choice{
     width:100%;
-    max-width:260px;
-    text-align:center;
+    max-width:250px;
   }
 
   .glow{
-    width:180px;
-    height:180px;
+    width:160px;
+    height:160px;
   }
 }
 </style>
