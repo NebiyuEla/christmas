@@ -16,7 +16,6 @@
   --text:#f5e9cf;
 }
 
-/* 🌙 moon theme */
 body.moon{
   --gold:#b9c7ff;
   --deep:#0a102a;
@@ -47,14 +46,10 @@ body{
 body.moon .glow{
   background:radial-gradient(circle,rgba(185,199,255,.35),transparent 70%);
 }
-
 .glow.one{top:10%;left:18%}
 .glow.two{bottom:12%;right:18%;animation-delay:2s}
 
-@keyframes flicker{
-  from{transform:scale(1)}
-  to{transform:scale(1.1)}
-}
+@keyframes flicker{from{transform:scale(1)} to{transform:scale(1.1)}}
 
 /* card */
 .card{
@@ -76,8 +71,8 @@ body.moon .glow{
   text-align:center;
   padding:24px 20px;
   overflow-y:auto;
-  animation:rise 1.6s ease;
   scroll-behavior:smooth;
+  animation:rise 1.6s ease;
 }
 
 /* cross */
@@ -98,13 +93,8 @@ h1{
   animation:shine 4s linear infinite;
   word-break:break-word;
 }
+@keyframes shine{from{background-position:0%} to{background-position:200%}}
 
-@keyframes shine{
-  from{background-position:0%}
-  to{background-position:200%}
-}
-
-/* subtitle */
 .subtitle{
   margin-top:10px;
   font-size:1.05rem;
@@ -127,12 +117,20 @@ button{
 }
 button:hover{transform:translateY(-2px) scale(1.04)}
 
+/* theme toggle - subtle but visible */
 .toggle{
-  margin-top:10px;
-  font-size:.9rem;
-  opacity:.8;
+  position:absolute;
+  top:16px;
+  right:16px;
+  font-size:.85rem;
+  opacity:.75;
   cursor:pointer;
+  padding:6px 12px;
+  border-radius:14px;
+  background:rgba(255,255,255,0.08);
+  transition:.3s;
 }
+.toggle:hover{opacity:1; transform:scale(1.05);}
 
 /* text boxes */
 .box{
@@ -145,6 +143,9 @@ button:hover{transform:translateY(-2px) scale(1.04)}
   word-wrap:break-word;
   text-align:center;
   overflow-wrap:break-word;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity 0.6s ease, transform 0.6s ease;
 }
 
 /* choices */
@@ -154,6 +155,9 @@ button:hover{transform:translateY(-2px) scale(1.04)}
   gap:12px;
   flex-wrap:wrap;
   justify-content:center;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity 0.6s ease, transform 0.6s ease;
 }
 .choice{
   padding:10px 20px;
@@ -171,70 +175,29 @@ button:hover{transform:translateY(-2px) scale(1.04)}
   display:none;
   margin-top:18px;
   font-size:1rem;
-  animation:fade 2s ease;
-  word-break:break-word;
   line-height:1.7;
+  word-break:break-word;
+  opacity:0;
+  transform:translateY(10px);
+  transition:opacity 0.8s ease, transform 0.8s ease;
 }
 
-@keyframes fade{
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1}
-}
+@keyframes rise{from{opacity:0;transform:translateY(24px) scale(.96)} to{opacity:1}}
 
+/* canvas */
 canvas{position:fixed;inset:0;z-index:0}
-
-@keyframes rise{
-  from{opacity:0;transform:translateY(24px) scale(.96)}
-  to{opacity:1}
-}
 
 /* 📱 MOBILE OPTIMIZATION */
 @media (max-width: 600px){
   body{overflow:auto;}
-
-  .card{
-    width:94%;
-    max-height:95vh;
-    height:auto;
-    padding:18px 14px;
-  }
-
-  h1{
-    font-size:2.2rem;
-    line-height:1.2;
-  }
-
-  .subtitle{
-    font-size:.95rem;
-  }
-
-  button{
-    width:100%;
-    max-width:300px;
-    padding:12px;
-  }
-
-  .toggle{
-    margin-top:8px;
-  }
-
-  .box{
-    font-size:.92rem;
-  }
-
-  .choices{
-    gap:8px;
-  }
-
-  .choice{
-    width:100%;
-    max-width:250px;
-  }
-
-  .glow{
-    width:160px;
-    height:160px;
-  }
+  .card{width:94%; max-height:95vh; height:auto; padding:18px 14px;}
+  h1{font-size:2.2rem; line-height:1.2;}
+  .subtitle{font-size:.95rem;}
+  button{width:100%; max-width:300px; padding:12px;}
+  .box{font-size:.92rem;}
+  .choices{gap:8px;}
+  .choice{width:100%; max-width:250px;}
+  .glow{width:160px; height:160px;}
 }
 </style>
 </head>
@@ -250,17 +213,15 @@ canvas{position:fixed;inset:0;z-index:0}
   <h1>መልካም ገና Bambi</h1>
   <div class="subtitle">A gentle ገና blessing for Sinorita</div>
 
-  <button onclick="step1()">Open with blessing 🙏</button>
+  <button id="blessingBtn">Open with blessing 🙏</button>
   <div class="toggle" onclick="toggleTheme()">🌙 Switch blessing mood</div>
 
   <div class="box" id="box1"></div>
-
   <div class="choices" id="choices">
     <div class="choice" onclick="respond('eyes')">👀 Look softly</div>
     <div class="choice" onclick="respond('laugh')">😄 Smile & laugh</div>
     <div class="choice" onclick="respond('shy')">🙈 Stay gentle</div>
   </div>
-
   <div class="box" id="box2"></div>
   <div class="final" id="final"></div>
 </div>
@@ -286,47 +247,72 @@ function draw(){
 }
 draw();
 
-/* typing effect */
-function typeText(el,text,i=0){
-  el.innerHTML+=text.charAt(i);
-  if(i<text.length-1) setTimeout(()=>typeText(el,text,i+1),38);
+/* typewriter text */
+function typeText(el,text,i=0,callback){
+  el.innerHTML="";
+  el.style.opacity=1;
+  el.style.transform="translateY(0)";
+  function typeStep(){
+    el.innerHTML+=text.charAt(i);
+    i++;
+    if(i<text.length) setTimeout(typeStep,38);
+    else if(callback) callback();
+  }
+  typeStep();
 }
 
-function step1(){
-  const b=document.getElementById("box1");
-  b.style.display="block";
-  b.innerHTML="";
-  typeText(b,
+const box1=document.getElementById("box1");
+const box2=document.getElementById("box2");
+const finalBox=document.getElementById("final");
+const choices=document.getElementById("choices");
+let blessingOpened=false;
+
+document.getElementById("blessingBtn").addEventListener("click",()=>{
+  if(blessingOpened) return; // prevent second click breaking
+  blessingOpened=true;
+  
+  box1.style.display="block";
+  choices.style.display="flex";
+
+  // animate box and choices smoothly
+  setTimeout(()=>{box1.style.opacity=1; box1.style.transform="translateY(0)";},50);
+  setTimeout(()=>{choices.style.opacity=1; choices.style.transform="translateY(0)";},500);
+
+  typeText(box1,
     "They say ገና is holy and calm… I agree. But then Bambi looks at me, and even silence starts to speak 😌"
   );
-  document.getElementById("choices").style.display="flex";
-}
+});
 
 function respond(type){
-  const b=document.getElementById("box2");
-  const f=document.getElementById("final");
-  b.style.display="block";
+  box2.style.display="block";
+  box2.style.opacity=0;
+  box2.style.transform="translateY(10px)";
+  setTimeout(()=>{box2.style.opacity=1; box2.style.transform="translateY(0)";},50);
 
   if(type==="eyes"){
-    b.innerHTML="Those eyes… that’s why I call you Bambi. Gentle, deep, and impossible to ignore.";
+    typeText(box2,"Those eyes… that’s why I call you Bambi. Gentle, deep, and impossible to ignore.",()=>showFinal());
   }
   if(type==="laugh"){
-    b.innerHTML="Sinorita, your smile turns this ገና into warmth. Joy fits you naturally.";
+    typeText(box2,"Sinorita, your smile turns this ገና into warmth. Joy fits you naturally.",()=>showFinal());
   }
   if(type==="shy"){
-    b.innerHTML="I respect that, Sinorita. Some beauty is quiet, and that makes it sacred.";
+    typeText(box2,"I respect that, Sinorita. Some beauty is quiet, and that makes it sacred.",()=>showFinal());
   }
+}
 
+function showFinal(){
+  finalBox.style.display="block";
+  finalBox.style.opacity=0;
+  finalBox.style.transform="translateY(10px)";
   setTimeout(()=>{
-    f.style.display="block";
-    f.innerHTML="🎄 On this ገና, may peace follow you, light surround you, and may you always be seen the way you truly are — Bambi, with beautiful eyes and a gentle soul.";
-  },1200);
+    finalBox.style.opacity=1;
+    finalBox.style.transform="translateY(0)";
+    finalBox.innerHTML="🎄 On this ገና, may peace follow you, light surround you, and may you always be seen the way you truly are — Bambi, with beautiful eyes and a gentle soul.";
+  },200);
 }
 
 /* toggle theme */
-function toggleTheme(){
-  document.body.classList.toggle("moon");
-}
+function toggleTheme(){document.body.classList.toggle("moon");}
 
 /* mobile height fix */
 function fixMobileHeight(){
