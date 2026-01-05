@@ -28,7 +28,7 @@ body.moon{
 *{margin:0;padding:0;box-sizing:border-box}
 
 body{
-  height:100vh;
+  height:calc(var(--vh, 1vh) * 100);
   background:radial-gradient(circle at top,var(--deep),var(--ink) 70%);
   font-family:'Inter',sans-serif;
   color:var(--text);
@@ -175,6 +175,59 @@ canvas{position:fixed;inset:0;z-index:0}
   from{opacity:0;transform:translateY(24px) scale(.96)}
   to{opacity:1}
 }
+
+/* 📱 MOBILE OPTIMIZATION */
+@media (max-width: 600px){
+  body{overflow:auto;}
+
+  .card{
+    width:94%;
+    height:auto;
+    min-height:90vh;
+    padding:26px 18px;
+    border-radius:24px;
+    justify-content:center;
+  }
+
+  h1{
+    font-size:2.2rem;
+    line-height:1.2;
+  }
+
+  .subtitle{
+    font-size:.95rem;
+    padding:0 10px;
+  }
+
+  button{
+    width:100%;
+    max-width:320px;
+    padding:14px;
+  }
+
+  .toggle{
+    margin-top:10px;
+  }
+
+  .box{
+    font-size:.95rem;
+  }
+
+  .choices{
+    gap:10px;
+  }
+
+  .choice{
+    width:100%;
+    max-width:260px;
+    text-align:center;
+  }
+
+  .glow{
+    width:180px;
+    height:180px;
+  }
+}
 </style>
 </head>
 
@@ -225,7 +278,7 @@ function draw(){
 }
 draw();
 
-/* typing */
+/* typing effect */
 function typeText(el,text,i=0){
   el.innerHTML+=text.charAt(i);
   if(i<text.length-1) setTimeout(()=>typeText(el,text,i+1),38);
@@ -258,14 +311,21 @@ function respond(type){
 
   setTimeout(()=>{
     f.style.display="block";
-    f.innerHTML="🎄 On this ገና, may peace follow you, light surround you, and may you always be seen the way you truly are Bambi, with beautiful eyes and a gentle soul.";
+    f.innerHTML="🎄 On this ገና, may peace follow you, light surround you, and may you always be seen the way you truly are — Bambi, with beautiful eyes and a gentle soul.";
   },1200);
 }
 
+/* toggle theme */
 function toggleTheme(){
   document.body.classList.toggle("moon");
 }
 
+/* mobile height fix */
+function fixMobileHeight(){
+  document.documentElement.style.setProperty('--vh', window.innerHeight*0.01+'px');
+}
+fixMobileHeight();
+window.addEventListener('resize', fixMobileHeight);
 window.onresize=()=>{c.width=innerWidth;c.height=innerHeight}
 </script>
 
